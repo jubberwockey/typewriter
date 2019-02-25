@@ -1,0 +1,20 @@
+[{"name": "plaintext",
+  "modifier": "",
+  "mapping": {
+    "81": "q",
+    "87": "w",
+  }
+},
+ {"name": "shift",
+  "modifier": "16777248",
+  "mapping": {}
+},
+ {"name": "ctrl",
+  "modifier": "16777250",
+  "mapping": {}
+},
+ {"name": "alt",
+  "modifier": "16777251",
+  "mapping": {}
+},
+]
