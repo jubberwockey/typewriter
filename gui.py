@@ -62,24 +62,44 @@ class MainWindow(QWidget):
     #     self.output_label.setText(text)
 
 
+    # def keyPressEvent(self, event):
+    #
+    #     if event.key() == Qt.Key_Escape:
+    #         self.close()
+    #
+    #     key_str = str(event.key())
+    #     if self.key_list == [] or not event.isAutoRepeat():
+    #         self.num_pressed += 1
+    #         self.key_list.append(key_str)
+    #
+    # def keyReleaseEvent(self, event):
+    #
+    #     if self.num_pressed > 0:
+    #         self.num_pressed -= 1
+    #
+    #     if self.num_pressed == 0:
+    #         self.updateRender(self.key_list)
+    #         self.key_list = []
+
     def keyPressEvent(self, event):
 
         if event.key() == Qt.Key_Escape:
             self.close()
 
         key_str = str(event.key())
-        if self.key_list == [] or self.key_list[-1] != key_str:
+        if not event.isAutoRepeat() and key_str != '16777249': # no cmd pressed, because key releases not fully captured
             self.num_pressed += 1
             self.key_list.append(key_str)
+            self.updateRender(self.key_list)
 
     def keyReleaseEvent(self, event):
+        print(self.num_pressed)
 
         if self.num_pressed > 0:
             self.num_pressed -= 1
-            # self.processmultikeys(self.key_list)
 
         if self.num_pressed == 0:
-            self.updateRender(self.key_list)
+            # self.updateRender(self.key_list)
             self.key_list = []
 
 
@@ -92,7 +112,7 @@ class MainWindow(QWidget):
             print(input, latex_str)
             if latex_str != '':
                 self.pixmap = mathTex_to_QPixmap(r'${latex_str}$'.format(latex_str=latex_str),
-                                                 fontsize=24)            
+                                                 fontsize=24)
         self.output_label.setPixmap(self.pixmap)
 
 def main():

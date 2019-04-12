@@ -130,14 +130,16 @@ class Typewriter(object):
     # def parse_settings(self, settings):
 
 
-    def latex_from_qt(self, keys_arr):
-        if int(keys_arr[0]) <= 16777220: # no modifier
-            self.latex += self.mapping['none'][keys_arr[0]]
+    def latex_from_qt(self, key_lst):
+        if int(key_lst[0]) <= 16777220: # no modifier
+            modifier = 'none'
         else:
-            try:
-                self.latex += self.mapping[keys_arr[0]][keys_arr[1]]
-            except:
-                pass
+            modifier = key_lst[0]
+
+        try:
+            self.latex += self.mapping[modifier][key_lst[-1]]
+        except:
+            pass
         return self.latex
 
     # def
