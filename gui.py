@@ -8,14 +8,15 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QGridLayout,
 from renderer import mathTex_to_QPixmap
 import typewriter as tw
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 class MainWindow(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.typewriter = tw.Typewriter()
-        self.key_list = []
-        self.num_pressed = 0
+        self.tw = tw.Typewriter()
         self.initUI()
 
     def initUI(self):
@@ -23,18 +24,19 @@ class MainWindow(QWidget):
         self.text_label = QLabel('Input here')
         self.text_edit = QTextEdit()
 
-        self.generate_btn = QPushButton('Generate')
+        # buttons invalidate space bar press registered on linux
+        # self.generate_btn = QPushButton('Generate')
 
         self.output_text = ''
         # self.output_label = QLabel(self.output_text, self)
         self.output_label = QLabel()
-        self.updateRender()
+        self.render_latex()
 
         grid = QGridLayout()
         grid.setSpacing(10)
 
         grid.addWidget(self.text_label, 1, 0)
-        grid.addWidget(self.generate_btn, 3, 0)
+        # grid.addWidget(self.generate_btn, 3, 0)
         # grid.addWidget(self.text_edit, 1, 1, 2, 1)
         grid.addWidget(self.output_label, 3, 1)
 
@@ -68,9 +70,9 @@ class MainWindow(QWidget):
     #         self.close()
     #
     #     key_str = str(event.key())
-    #     if self.key_list == [] or not event.isAutoRepeat():
+    #     if self.key_lst == [] or not event.isAutoRepeat():
     #         self.num_pressed += 1
-    #         self.key_list.append(key_str)
+    #         self.key_lst.append(key_str)
     #
     # def keyReleaseEvent(self, event):
     #
@@ -78,38 +80,34 @@ class MainWindow(QWidget):
     #         self.num_pressed -= 1
     #
     #     if self.num_pressed == 0:
-    #         self.updateRender(self.key_list)
-    #         self.key_list = []
+    #         self.updateRender(self.key_lst)
+    #         self.key_lst = []
 
     def keyPressEvent(self, event):
+        logging.info("Key pressed")
 
         if event.key() == Qt.Key_Escape:
             self.close()
 
         key_str = str(event.key())
-        if not event.isAutoRepeat() and key_str != '16777249': # no cmd pressed, because key releases not fully captured
-            self.num_pressed += 1
-            self.key_list.append(key_str)
-            self.updateRender(self.key_list)
+        logging.debug("keyPressEvent: '{}' {} mod: {} mod raw: {}".format(event.text(),event.key(), event.nativeModifiers(), int(event.modifiers())))
+
+        if not event.isAutoRepeat() and key_str != '16777249': # no mac cmd pressed, because key releases not fully captured
+            self.tw.process_key_pressed(key_str)
+            self.render_latex(self.tw.key_lst)
 
     def keyReleaseEvent(self, event):
-        print(self.num_pressed)
-
-        if self.num_pressed > 0:
-            self.num_pressed -= 1
-
-        if self.num_pressed == 0:
-            # self.updateRender(self.key_list)
-            self.key_list = []
+        self.tw.process_key_released()
+        logging.info("Key released")
 
 
-    def updateRender(self, input=None):
+    def render_latex(self, input=None):
 
         if input is None:
             self.pixmap = QPixmap()
         else:
-            latex_str = self.typewriter.latex_from_qt(input)
-            print(input, latex_str)
+            latex_str = self.tw.latex_str
+            logger.debug("Latex: {} {}".format(latex_str, input))
             if latex_str != '':
                 self.pixmap = mathTex_to_QPixmap(r'${latex_str}$'.format(latex_str=latex_str),
                                                  fontsize=24)

@@ -1,9 +1,19 @@
-
+import json
+import platform
+import logging
+logger = logging.getLogger(__name__)
 
 class Typewriter(object):
 
     def __init__(self):
         super().__init__()
+        # keypress tracking
+        self.num_pressed = 0
+        self.key_lst = []
+        with open('./config/os_config.json', 'r') as os_config_file:
+            os_config = json.load(os_config_file)
+        self.modifiers = os_config[platform.system()]
+
         self.symbol_list = []
         self.symbol = r'{}'
         self.latex = r''
@@ -130,7 +140,7 @@ class Typewriter(object):
     # def parse_settings(self, settings):
 
 
-    def latex_from_qt(self, key_lst):
+    def get_latex(self, key_lst):
         if int(key_lst[0]) <= 16777220: # no modifier
             modifier = 'none'
         else:
@@ -142,4 +152,15 @@ class Typewriter(object):
             pass
         return self.latex
 
-    # def
+    def process_key_pressed(self, key_str):
+        self.num_pressed += 1
+        self.key_lst.append(key_str)
+        self.latex_str = self.get_latex(self.key_lst)
+
+    def process_key_released(self):
+        if self.num_pressed > 0:
+            self.num_pressed -= 1
+
+        if self.num_pressed == 0:
+            # self.updateRender(self.key_lst)
+            self.key_lst = []
