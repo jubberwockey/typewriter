@@ -150,7 +150,7 @@ class Typewriter(object):
             self.num_pressed += 1
             self.key_lst.append(key_str)
             self.latex_str = self.get_latex(self.key_lst)
-            logging.debug("key_lst: {}, latex: {}".format(self.key_lst, self.latex_str))
+            # logging.debug("key_lst: {}, latex: {}".format(self.key_lst, self.latex_str))
 
     def process_key_released(self):
         if self.num_pressed > 0:
