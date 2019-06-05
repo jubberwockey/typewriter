@@ -13,6 +13,7 @@ class Typewriter(object):
         with open('./config/os_config.json', 'r') as os_config_file:
             os_config = json.load(os_config_file)
         self.modifiers = os_config[platform.system()]
+        self.modifiers_inv = {v: k for k, v in self.modifiers.items()}
 
         self.symbol_list = []
         self.symbol = r'{}'
@@ -127,14 +128,6 @@ class Typewriter(object):
 '16777220': '', # enter
 }
 }
-# {'modifier': '16777248', # shift
-# '16777248': {}},
-# {'modifier': '16777249', # cmd
-# '16777249': {}},
-# {'modifier': '16777250', # ctrl
-# '16777250': {}},
-# {'modifier': '16777251', # alt
-# '16777251': {}},
 
 
     # def parse_settings(self, settings):
