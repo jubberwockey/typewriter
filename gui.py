@@ -30,7 +30,7 @@ class MainWindow(QWidget):
         self.output_text = ''
         # self.output_label = QLabel(self.output_text, self)
         self.output_label = QLabel()
-        # self.render_latex()
+        self.render_latex()
 
         grid = QGridLayout()
         grid.setSpacing(10)
@@ -44,6 +44,45 @@ class MainWindow(QWidget):
         self.setGeometry(100, 100, 500, 200)
         self.setWindowTitle('typewriter')
         self.show()
+
+
+    def keyPressEvent(self, event):
+        logging.info("Key pressed")
+
+        if event.key() == Qt.Key_Escape:
+            self.close()
+
+        logging.debug("keyPressEvent: '{}' {} mod: {} mod raw: {}".format(event.text(),event.key(), event.nativeModifiers(), int(event.modifiers())))
+
+        key_str = str(event.key())
+        if not event.isAutoRepeat():
+            self.tw.process_key_pressed(key_str)
+            self.render_latex(self.tw.latex_str)
+
+
+    def keyReleaseEvent(self, event):
+        self.tw.process_key_released()
+        logging.info("Key released")
+
+
+    def render_latex(self, latex_str=None):
+        # initialize
+        if latex_str is None:
+            self.pixmap = QPixmap()
+        else:
+            self.pixmap = mathTex_to_QPixmap(r'${latex_str}$'.format(latex_str=latex_str),
+                                             fontsize=24)
+            self.output_label.setPixmap(self.pixmap)
+
+
+def main():
+    app = QApplication(sys.argv)
+    mw = MainWindow()
+    sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()
+
 
     # def keyPressEvent(self, event):
     #
@@ -82,42 +121,3 @@ class MainWindow(QWidget):
     #     if self.num_pressed == 0:
     #         self.updateRender(self.key_lst)
     #         self.key_lst = []
-
-    def keyPressEvent(self, event):
-        logging.info("Key pressed")
-
-        if event.key() == Qt.Key_Escape:
-            self.close()
-
-        key_str = str(event.key())
-        logging.debug("keyPressEvent: '{}' {} mod: {} mod raw: {}".format(event.text(),event.key(), event.nativeModifiers(), int(event.modifiers())))
-
-        if not event.isAutoRepeat() and key_str != self.tw.modifiers['meta']: # exclude win, mac cmd key
-            self.tw.process_key_pressed(key_str)
-            self.render_latex(self.tw.key_lst)
-
-    def keyReleaseEvent(self, event):
-        self.tw.process_key_released()
-        logging.info("Key released")
-
-
-    def render_latex(self, input=None):
-
-        if input is None:
-            self.pixmap = QPixmap()
-        else:
-            latex_str = self.tw.latex_str
-            logger.debug("Latex: {} {}".format(latex_str, input))
-            if latex_str != '':
-                self.pixmap = mathTex_to_QPixmap(r'${latex_str}$'.format(latex_str=latex_str),
-                                                 fontsize=24)
-        self.output_label.setPixmap(self.pixmap)
-
-def main():
-
-    app = QApplication(sys.argv)
-    mw = MainWindow()
-    sys.exit(app.exec_())
-
-if __name__ == '__main__':
-    main()

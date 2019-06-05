@@ -146,14 +146,15 @@ class Typewriter(object):
         return self.latex
 
     def process_key_pressed(self, key_str):
-        self.num_pressed += 1
-        self.key_lst.append(key_str)
-        self.latex_str = self.get_latex(self.key_lst)
+        if key_str != self.modifiers['meta']: # exclude win, mac cmd key
+            self.num_pressed += 1
+            self.key_lst.append(key_str)
+            self.latex_str = self.get_latex(self.key_lst)
+            logging.debug("key_lst: {}, latex: {}".format(self.key_lst, self.latex_str))
 
     def process_key_released(self):
         if self.num_pressed > 0:
             self.num_pressed -= 1
 
         if self.num_pressed == 0:
-            # self.updateRender(self.key_lst)
             self.key_lst = []
