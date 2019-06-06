@@ -1,12 +1,15 @@
 import sys
+import argparse
 from itertools import groupby
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import (QApplication, QWidget, QGridLayout,
     QLabel, QTextEdit, QPushButton)
 
 from renderer import mathTex_to_QPixmap
-import typewriter as tw
+import typewriter
+import keylogger
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -16,10 +19,11 @@ class MainWindow(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.tw = tw.Typewriter()
         self.initUI()
 
     def initUI(self):
+
+        self.tw = typewriter.Typewriter()
 
         self.text_label = QLabel('Input here')
         self.text_edit = QTextEdit()
@@ -52,12 +56,15 @@ class MainWindow(QWidget):
         if event.key() == Qt.Key_Escape:
             self.close()
 
-        logging.debug("keyPressEvent: '{}' {} mod: {} mod raw: {}".format(event.text(),event.key(), event.nativeModifiers(), int(event.modifiers())))
+        key_meta = {'id': str(event.key()),
+                    'text': event.text(),
+                    'modifier': str(int(event.modifiers()))}
 
-        key_str = str(event.key())
+        logging.debug("keyPressEvent: {id} '{text}' mod: {modifier}".format(**key_meta))
+
         if not event.isAutoRepeat():
-            self.tw.process_key_pressed(key_str)
-            self.render_latex(self.tw.latex_str)
+            latex_str = self.tw.process_key_pressed(key_meta)
+            self.render_latex(latex_str)
 
 
     def keyReleaseEvent(self, event):
@@ -75,10 +82,20 @@ class MainWindow(QWidget):
             self.output_label.setPixmap(self.pixmap)
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--cli', action='store_true')
+    return parser.parse_args(sys.argv[1:])
+
 def main():
-    app = QApplication(sys.argv)
-    mw = MainWindow()
-    sys.exit(app.exec_())
+    args = parse_args()
+    if args.cli:
+        kl = keylogger.Keylogger()
+        kl.listen()
+    else:
+        app = QApplication(sys.argv)
+        mw = MainWindow()
+        sys.exit(app.exec_())
 
 if __name__ == '__main__':
     main()

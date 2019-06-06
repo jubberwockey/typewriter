@@ -15,10 +15,17 @@ class Typewriter(object):
         self.modifiers = os_config[platform.system()]
         self.modifiers_inv = {v: k for k, v in self.modifiers.items()}
 
-        self.symbol_list = []
+        with open('./config/translations.json', 'r') as t_file:
+            self.translations = json.load(t_file)
+        with open('./config/translations_modifiers.json') as tm_file:
+            self.translations_modifiers = json.load(tm_file)
+        with open('./config/mapping.json') as mapping_file:
+            self.mapping = json.load(mapping_file)
+
+        self.symbol_lst = []
         self.symbol = r'{}'
         self.latex = r''
-        self.mapping = {
+        self.mapping_old = {
 'none': {
 '32': r' ',
 '39': r"'",
@@ -140,12 +147,28 @@ class Typewriter(object):
             modifier = key_lst[0]
 
         try:
-            self.latex += self.mapping[modifier][key_lst[-1]]
+            self.latex += self.mapping_old[modifier][key_lst[-1]]
         except:
             pass
         return self.latex
 
-    def process_key_pressed(self, key_str):
+    def get_mapping(self, key_meta):
+        pass
+
+    def process_key_pressed(self, key_meta):
+        self.modifier = self.translations_modifiers.get(key_meta['modifier'], None)
+        # key_meta[id] is language specific... can this be circumvented?
+        self.key = self.translations.get(key_meta['id'], None)
+
+        # get latex mapping from mapping file if present, otherwise use default text
+        if self.modifier in self.mapping:
+            logging.debug("found modifer {}".format(self.modifier))
+            modifier_mapping = self.mapping[self.modifier]
+            self.latex_str = modifier_mapping.get(self.key, key_meta['text'])
+            logging.debug("found mapping {}".format(self.latex_str))
+            return self.latex_str
+
+        key_str = str(key_meta['id'])
         if key_str != self.modifiers['meta']: # exclude win, mac cmd key
             self.num_pressed += 1
             self.key_lst.append(key_str)
