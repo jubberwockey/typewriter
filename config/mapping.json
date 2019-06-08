@@ -1,11 +1,15 @@
 {
   "none": {
-    "tab": "\\quad"
+    "space": "\\,",
+    "tab": "\\quad "
   },
   "shift": {
       "up": "^",
       "page_up": "^",
       "page_down": "_"
+  },
+  "ctrl": {
+    "a": "\\mathfrak{A}"
   },
   "alt": {
     "a": "\\alpha ",
@@ -63,32 +67,32 @@
     "y": "Y ",
     "z": "\\Zeta "
   },
-  "ctrl+alt": {
-    "a": "\\mathcal{a}",
-    "b": "\\mathcal{b}",
-    "c": "\\mathcal{c}",
-    "d": "\\mathcal{d}",
-    "e": "\\mathcal{e}",
-    "f": "\\mathcal{f}",
-    "g": "\\mathcal{g}",
-    "h": "\\mathcal{h}",
-    "i": "\\mathcal{i}",
-    "j": "\\mathcal{j}",
-    "k": "\\mathcal{k}",
-    "l": "\\mathcal{l}",
-    "m": "\\mathcal{m}",
-    "n": "\\mathcal{n}",
-    "o": "\\mathcal{o}",
-    "p": "\\mathcal{p}",
-    "q": "\\mathcal{q}",
-    "r": "\\mathcal{r}",
-    "s": "\\mathcal{s}",
-    "t": "\\mathcal{t}",
-    "u": "\\mathcal{u}",
-    "v": "\\mathcal{v}",
-    "w": "\\mathcal{w}",
-    "x": "\\mathcal{x}",
-    "y": "\\mathcal{y}",
-    "z": "\\mathcal{z}"
+  "shift+ctrl": {
+    "a": "\\mathcal{A}",
+    "b": "\\mathcal{B}",
+    "c": "\\mathcal{C}",
+    "d": "\\mathcal{D}",
+    "e": "\\mathcal{E}",
+    "f": "\\mathcal{F}",
+    "g": "\\mathcal{G}",
+    "h": "\\mathcal{H}",
+    "i": "\\mathcal{I}",
+    "j": "\\mathcal{J}",
+    "k": "\\mathcal{K}",
+    "l": "\\mathcal{L}",
+    "m": "\\mathcal{M}",
+    "n": "\\mathcal{N}",
+    "o": "\\mathcal{O}",
+    "p": "\\mathcal{P}",
+    "q": "\\mathcal{Q}",
+    "r": "\\mathcal{R}",
+    "s": "\\mathcal{S}",
+    "t": "\\mathcal{T}",
+    "u": "\\mathcal{U}",
+    "v": "\\mathcal{V}",
+    "w": "\\mathcal{W}",
+    "x": "\\mathcal{X}",
+    "y": "\\mathcal{Y}",
+    "z": "\\mathcal{Z}"
   }
 }

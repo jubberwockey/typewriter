@@ -1,7 +1,3 @@
-import sys
-import argparse
-from itertools import groupby
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import (QApplication, QWidget, QGridLayout,
@@ -9,7 +5,6 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QGridLayout,
 
 from renderer import mathTex_to_QPixmap
 import typewriter
-import keylogger
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -45,7 +40,7 @@ class MainWindow(QWidget):
         grid.addWidget(self.output_label, 3, 1)
 
         self.setLayout(grid)
-        self.setGeometry(100, 100, 500, 200)
+        self.setGeometry(100, 100, 500, 300)
         self.setWindowTitle('typewriter')
         self.show()
 
@@ -77,64 +72,9 @@ class MainWindow(QWidget):
         if latex_str is None:
             self.pixmap = QPixmap()
         else:
-            self.pixmap = mathTex_to_QPixmap(r'${latex_str}$'.format(latex_str=latex_str),
-                                             fontsize=24)
-            self.output_label.setPixmap(self.pixmap)
-
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--cli', action='store_true')
-    return parser.parse_args(sys.argv[1:])
-
-def main():
-    args = parse_args()
-    if args.cli:
-        kl = keylogger.Keylogger()
-        kl.listen()
-    else:
-        app = QApplication(sys.argv)
-        mw = MainWindow()
-        sys.exit(app.exec_())
-
-if __name__ == '__main__':
-    main()
-
-
-    # def keyPressEvent(self, event):
-    #
-    #     if event.key() == Qt.Key_Escape:
-    #         self.close()
-    #
-    #     modifiers = QApplication.keyboardModifiers()
-    #     if modifiers == Qt.ShiftModifier:
-    #         mod_text = 'Shift'
-    #     elif modifiers == Qt.ControlModifier:
-    #         pass
-    #     elif modifiers == (Qt.ControlModifier | Qt.ShiftModifier):
-    #         mod_text = 'Ctrl+Shift'
-    #     else:
-    #         mod_text = ''
-    #
-    #     text = 'Letter: {mod} {let}'.format(mod=mod_text, let=event.key())
-    #     self.output_label.setText(text)
-
-
-    # def keyPressEvent(self, event):
-    #
-    #     if event.key() == Qt.Key_Escape:
-    #         self.close()
-    #
-    #     key_str = str(event.key())
-    #     if self.key_lst == [] or not event.isAutoRepeat():
-    #         self.num_pressed += 1
-    #         self.key_lst.append(key_str)
-    #
-    # def keyReleaseEvent(self, event):
-    #
-    #     if self.num_pressed > 0:
-    #         self.num_pressed -= 1
-    #
-    #     if self.num_pressed == 0:
-    #         self.updateRender(self.key_lst)
-    #         self.key_lst = []
+            try:
+                self.pixmap = mathTex_to_QPixmap(r'${latex_str}$'.format(latex_str=latex_str),
+                                                 fontsize=24)
+                self.output_label.setPixmap(self.pixmap)
+            except:
+                logging.error("latex render error")

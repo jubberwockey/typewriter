@@ -49,6 +49,7 @@
   "92": "backslash",
   "93": "right_bracket",
   "96": "quote_italics",
+  "16777216": "esc",
   "16777217": "tab",
   "16777219": "backspace",
   "16777220": "return",
